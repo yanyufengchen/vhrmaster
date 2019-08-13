@@ -72,6 +72,7 @@
       //重置
       resetClick: function () {
         var _this = this;
+        this.loading = false;
         this.form.username = "";
         this.form.password="";
       },

@@ -1,9 +1,9 @@
 package org.hrsys.service.impl.systemmanage;
 
-import org.hrsys.service.api.SystemManage.ManagerManage;
+import org.hrsys.service.api.SystemManage.ManagerManageService;
 import org.hrsys.bean.Hr;
 import org.hrsys.dao.systemmanage.SystemManagerDao;
-import org.hrsys.databasevarible.systemmanage.SystemManagerDto;
+import org.hrsys.dto.systemmanage.SystemManagerDto;
 import org.hrsys.dozer.DozerConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class SystemManagerImp implements ManagerManage {
+public class SystemManagerImp implements ManagerManageService {
 
     @Autowired
     private DozerConverter dozerConverter;

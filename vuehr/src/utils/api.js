@@ -1,5 +1,7 @@
 import axios from 'axios'
 import {Message} from 'element-ui'
+axios.defaults.withCredentials=true
+axios.defaults.timeout = 5000
 axios.interceptors.request.use(config => {
   return config;
 }, err => {
@@ -31,7 +33,7 @@ axios.interceptors.response.use(data => {
   }
   // return Promise.resolve(err);
 })
-let base = '';
+let base = 'http://localhost:8082';
 export const postRequest = (url, params) => {
   return axios({
     method: 'post',
@@ -76,15 +78,24 @@ export const putRequest = (url, params) => {
     }
   });
 }
-export const deleteRequest = (url) => {
+export const deleteRequest = (url,data) => {
   return axios({
     method: 'delete',
-    url: `${base}${url}`
+    url: `${base}${url}`,
+    params: data
   });
 }
-export const getRequest = (url) => {
+export const getRequest = (url,data) => {
   return axios({
     method: 'get',
-    url: `${base}${url}`
+    url: `${base}${url}`,
+    params: data
   });
+}
+export const deleteMutiRequest = (url,data) => {
+  return axios({
+    method: 'delete',
+    url:'${base}${url}',
+    data:data
+  })
 }

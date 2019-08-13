@@ -1,9 +1,16 @@
 package org.hrsys.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.hrsys.bean.Hr;
+import org.hrsys.bean.RespBean;
 import org.hrsys.common.HrUtils;
+import org.hrsys.constant.Constant;
 import org.hrsys.mapper.HrMapper;
+import org.hrsys.vo.SysManQueryVo;
+import org.hrsys.vo.page.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.github.pagehelper.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,8 +50,21 @@ public class HrService implements UserDetailsService {
         return hrMapper.hrReg(hr.getName(),hr.getUsername(),hr.getTelephone(),hr.getPhone(),hr.getAddress(),encode);
     }
 
-    public List<Hr> getHrsByKeywords(String keywords) {
-        return hrMapper.getHrsByKeywords(keywords);
+    /**
+     * hr人员查询
+     * @param sysManQueryVo
+     * @return
+     */
+    public PageResult getHrsByKeywords(final SysManQueryVo sysManQueryVo) {
+
+        if(sysManQueryVo.getRows() > Constant.MAX_PAGE_SIZE){
+            sysManQueryVo.setRows(Constant.MAX_PAGE_SIZE);
+        }else if(sysManQueryVo.getRows() <= 0){
+            sysManQueryVo.setRows(1);
+        }
+        PageHelper.startPage(sysManQueryVo.getPage(), sysManQueryVo.getRows());
+        List<Hr> list =  hrMapper.getHrsByKeywords(sysManQueryVo.getKeywords());
+        return new PageResult<>(((Page) list).getTotal(), list);
     }
 
     public int updateHr(Hr hr) {

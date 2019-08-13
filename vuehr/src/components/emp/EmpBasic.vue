@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-container>
+      <!--头部搜索栏-->
       <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center">
         <div style="display: inline">
           <el-input
@@ -12,7 +13,8 @@
             :disabled="advanceSearchViewVisible"
             @keyup.enter.native="searchEmp"
             prefix-icon="el-icon-search"
-            v-model="keywords">
+            v-model="keywords"
+            clearable>
           </el-input>
           <el-button type="primary" size="mini" style="margin-left: 5px" icon="el-icon-search" @click="searchEmp">搜索
           </el-button>
@@ -43,8 +45,10 @@
           </el-button>
         </div>
       </el-header>
+
       <el-main style="padding-left: 0px;padding-top: 0px">
         <div>
+          <!--高级搜索-->
           <transition name="slide-fade">
             <div
               style="margin-bottom: 10px;border: 1px;border-radius: 5px;border-style: solid;padding: 5px 0px 5px 0px;box-sizing:border-box;border-color: #20a0ff"
@@ -138,6 +142,7 @@
               </el-row>
             </div>
           </transition>
+          <!--表格内容格式-->
           <el-table
             :data="emps"
             v-loading="tableLoading"
@@ -291,10 +296,12 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="display: flex;justify-content: space-between;margin: 2px">
+          <!--删除-->
+          <div style="display: flex;justify-content: space-between;margin-top: 10px">
             <el-button type="danger" size="mini" v-if="emps.length>0" :disabled="multipleSelection.length==0"
                        @click="deleteManyEmps">批量删除
             </el-button>
+            <!--分页-->
             <el-pagination
               background
               :page-size="10"

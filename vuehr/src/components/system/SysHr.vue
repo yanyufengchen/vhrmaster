@@ -1,6 +1,7 @@
 <template>
-  <div style="margin-top: 10px" v-loading="fullloading">
-    <div style="margin-bottom: 10px;display: flex;justify-content: left;align-items: center">
+   <div style="margin-top: 10px" v-loading="fullloading">
+    <!--第一栏搜索框-->
+    <div style="margin-bottom: 10px; display: flex;justify-content: left;align-items: center">
       <el-input
         placeholder="默认展示部分用户，可以通过用户名搜索更多用户..."
         prefix-icon="el-icon-search"
@@ -12,6 +13,7 @@
       <el-button size="small"  icon="el-icon-refresh" @click="resetClick">重置</el-button>
       <el-button size="small" icon="el-icon-plus" style="margin-right: 5px" @click="addSysMan">添加管理员</el-button>
     </div>
+    <!--第二块区域，显示hr人员列表-->
     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;text-align: left">
       <el-card style="width: 350px;margin-bottom: 20px" v-for="(item,index) in hrs" :key="item.id"
                v-loading="cardLoading[index]">
@@ -80,14 +82,27 @@
         </div>
       </el-card>
     </div>
-    <register-user  ref="registerUser"  @userAddSuccess="initCards"></register-user>
+    <!--第三块区域，设置分页-->
+    <div style="margin-top: 10px;display: flex;justify-content: left">
+      <el-pagination
+        @size-change="pageSizeChange"
+        @current-change="pageChange"
+        :current-page="page"
+        :page-sizes="[4,8,16,24]"
+        :page-size="rows"
+        layout="total, prev, pager, next,sizes,jumper"
+        :total="totalRows">
+      </el-pagination>
+    </div>
+    <register-user  ref="registerUser"  @userAddSuccess="searchClick"></register-user>
   </div>
 </template>
 
 <script>
   import RegisterUser from  './components/RegisterUser'
+  import ElPager from "element-ui/packages/pagination/src/pager";
   export default{
-    components:{RegisterUser},
+    components:{ElPager, RegisterUser},
     data(){
       return {
         keywords: '',
@@ -98,7 +113,10 @@
         allRoles: [],
         moreBtnState:false,
         selRoles: [],
-        selRolesBak: []
+        selRolesBak: [],
+        totalRows: 0,
+        page: 1,
+        rows:4,
       }
     },
     mounted: function () {
@@ -109,6 +127,18 @@
     methods: {
       addSysMan(){
         this.$refs.registerUser.init();
+      },
+
+      //page页数切换
+      pageChange(page){
+        this.rows = page;
+        this.searchClick();
+      },
+
+      //pageSize页数切换
+      pageSizeChange(rows){
+        this.rows = rows;
+        this.searchClick();
       },
 
       //查询系统管理员
@@ -124,6 +154,7 @@
         this.loadAllRoles();
       },
 
+      //更新管理员角色
       updateHrRoles(hrId, index){
         this.moreBtnState = false;
         var _this = this;
@@ -152,6 +183,7 @@
             if (data.status == 'success') {
               _this.refreshHr(hrId, index);
             }
+            _this.searchClick();
           }
         });
       },
@@ -204,15 +236,22 @@
         this.fullloading = true;
         var _this = this;
         var searchWords;
+        let params = {};
+        params.page = this.page;
+        params.rows = this.rows;
+        params.keywords = this.keywords;
         if (this.keywords === '') {
           searchWords = 'all';
         } else {
           searchWords = this.keywords;
         }
-        this.getRequest("/system/hr/" + searchWords).then(resp=> {
+        var url = "/system/hr/" + searchWords;
+        this.getRequest(url,params).then(resp=> {
+          console.log(resp)
           if (resp && resp.status == 200) {
-            _this.hrs = resp.data;
-            var length = resp.data.length;
+            _this.hrs = resp.data.data.data;
+            var length = resp.data.data.data.length;
+            _this.totalRows = length;
             _this.cardLoading = Array.apply(null, Array(length)).map(function (item, i) {
               return false;
             });

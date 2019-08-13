@@ -1,8 +1,5 @@
 <template>
   <el-form :model="emp" :rules="rules" ref="addSysMamForm" style="margin: 0px;padding: 0px;">
-    <div style="size: 200px" v-if="close">
-      <el-alert type="warning" description="两次密码不相同，请重新输入!" center show-icon></el-alert>
-    </div>
     <div style="text-align: left">
       <el-dialog
         :title="dialogTitle"
@@ -86,22 +83,15 @@
       addEmp(addSysMamForm){
         var _this = this;
         this.$refs[addSysMamForm].validate((valid) => {
-          debugger;
           if (valid) {
               //添加
-            if(this.emp.password == this.emp.actualpassword){
               this.postRequest("/system/hr/register/SysMan", this.emp).then(resp=> {
                 if (resp && resp.status == 200) {
                   _this.dialogVisible = false;
                   _this.emptyEmpData();
                 }
               })
-            }else{
-              this.close = true;
-              this.emp.password = "";
-              this.emp.actualpassword = "";
-            }
-          } else {
+            } else {
             return false;
           }
         });

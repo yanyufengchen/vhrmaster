@@ -42,7 +42,7 @@
         <if test="keywords!='all' and keywords!=''">
             and h.`name` like concat('%',#{keywords},'%')
         </if>
-        order by h.`id` limit 10
+        order by h.`id`
     </select>
     <select id="getHrById" resultMap="eagerLoadRoles">
         select h.*,`r`.`id` AS `rid`,`r`.`name` AS `rname`,`r`.`nameZh` AS `rnameZh` from ((`hr` `h` left join `hr_role`

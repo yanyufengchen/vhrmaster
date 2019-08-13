@@ -1,4 +1,4 @@
-package org.hrsys.databasevarible.systemmanage;
+package org.hrsys.dto.systemmanage;
 
 import lombok.Data;
 

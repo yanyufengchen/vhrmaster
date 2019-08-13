@@ -8,7 +8,7 @@ import org.hrsys.bean.Hr;
  */
 
 
-public interface ManagerManage {
+public interface ManagerManageService {
 
     /**
      * 新增操作员

@@ -1,17 +1,16 @@
 package org.hrsys.controller.system;
 
-import org.hrsys.service.api.SystemManage.ManagerManage;
+import org.hrsys.service.api.SystemManage.ManagerManageService;
 import org.hrsys.bean.Hr;
 import org.hrsys.bean.RespBean;
 import org.hrsys.service.HrService;
+import org.hrsys.vo.SysManQueryVo;
+import org.hrsys.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Created by sang on 2018/1/2.
@@ -26,7 +25,7 @@ public class SystemHrController {
     private HrService hrService;
 
     @Autowired
-    private ManagerManage managerManage;
+    private ManagerManageService managerManage;
 
     @RequestMapping("/id/{hrId}")
     public Hr getHrById(@PathVariable Long hrId) {
@@ -57,31 +56,28 @@ public class SystemHrController {
         return RespBean.error("更新失败!");
     }
 
+    /**系统管理员hr查询
     @RequestMapping("/{keywords}")
-    public List<Hr> getHrsByKeywords(@PathVariable(required = false) String keywords) {
-        List<Hr> hrs = hrService.getHrsByKeywords(keywords);
+    public List<Hr> getHrsByKeywords(@PathVariable(required = false) SysManQueryVo SysManQueryVo) {
+        List<Hr> hrs = hrService.getHrsByKeywords(SysManQueryVo.getHrName());
         return hrs;
+    }*/
+
+    @RequestMapping("/{keywords}")
+    public ResponseEntity<Result> getHrByKeywords(@Valid SysManQueryVo SysManQueryVo){
+        return ResponseEntity.ok(Result.success(hrService.getHrsByKeywords(SysManQueryVo)));
     }
 
     /**
      **系统管理员注册
      **/
     @RequestMapping(value = "/register/SysMan", method = RequestMethod.POST)
-    public RespBean addSystemManager(@Valid Hr hr) {
+    public RespBean addSystemManager(Hr hr) {
+        if(hr.getActualpassword() != hr.getPassword()){
+            return RespBean.error("两次密码输入不同，请确认重新输入！");
+        }
         managerManage.addSystemManager(hr);
         return RespBean.ok("注册成功!");
     }
-
-    /**
-    @RequestMapping(value = "/hr/reg", method = RequestMethod.POST)
-    public RespBean hrReg(String username, String password) {
-        int i = hrService.hrReg(username, password);
-        if (i == 1) {
-            return RespBean.ok("注册成功!");
-        } else if (i == -1) {
-            return RespBean.error("用户名重复，注册失败!");
-        }
-        return RespBean.error("注册失败!");
-    }**/
 
 }
